@@ -5,19 +5,11 @@ from ..hashing import Hash
 from ..db import collection_book, collection_users
 from bson import ObjectId
 from datetime import date, timedelta
-import re
-
 today = date.today()
 end_date = today + timedelta(days=60)
 
-regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 def create(request: schemas.User):
-    # username validation 
-    if not re.fullmatch(regex, request.email):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Invalid Email")
-
     # password hashing
     request.password = Hash.bcrypt(request.password)
     data = dict(request)

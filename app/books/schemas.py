@@ -1,6 +1,7 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
+EntryCode = constr(regex=r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
 
 class BooksBase(BaseModel):
     title: str
@@ -20,8 +21,8 @@ class UserBooks(BaseModel):
         orm_mode=True
 
 class User(BaseModel):
-    name:str
-    email:str
+    name: str
+    email: EntryCode
     password:str
 
 class ShowUser(BaseModel):

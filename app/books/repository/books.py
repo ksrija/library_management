@@ -1,17 +1,15 @@
-from sqlalchemy.orm import Session
-from .. import  schemas
+
+from app.books import  schemas
 from fastapi import HTTPException, status
-# from ..dependency import users
-from ..db import collection_book, collection_users
+from app.books.db import collection_book, collection_users
 
 # from bson import ObjectId
 
 
 def get_all():
-    blogs = list(collection_book.find())
+    blogs = [doc for doc in collection_book.find()]
     return blogs
 
-# does not make sense for books
 def show_users():
     users = [doc for doc in collection_users.find()]
     return users
@@ -26,7 +24,7 @@ def create(request: schemas.Books):
 def remove(request):
     book = collection_book.find_one(dict(request))
     if not book:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+        raise HTTPException(status_code=status.h,
                             detail=f"Book with title: {request.title} not found")
 
     collection_book.find_one_and_delete(dict(request))

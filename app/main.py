@@ -1,11 +1,8 @@
 from fastapi import FastAPI
-# from . import  models
-# from .database import engine
-# from .books.routers import books, users, authentication
-from books.routers import books, users, authentication
+from app.books.routers import authentication,books,users
 from mangum import Mangum
 
-app = FastAPI()
+app = FastAPI(root_path="")   #DEV
 
 
 app.include_router(authentication.router)
@@ -13,3 +10,8 @@ app.include_router(books.router)
 app.include_router(users.router)
 
 handler = Mangum(app)
+
+
+@app.get("/")
+def show():
+    return{"data":"Welcome to library!"}

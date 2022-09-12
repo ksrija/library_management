@@ -1,10 +1,10 @@
-from sqlalchemy.orm import Session
-from .. import  schemas
+from app.books import  schemas
 from fastapi import HTTPException, status
-from ..hashing import Hash
-from ..db import collection_book, collection_users
+from app.books.hashing import Hash
+from app.books.db import collection_book, collection_users
 from bson import ObjectId
 from datetime import date, timedelta
+
 today = date.today()
 end_date = today + timedelta(days=60)
 
@@ -15,7 +15,7 @@ def create(request: schemas.User):
     data = dict(request)
     data["books"]=[{"title": "No title","author":"No author","issue_date": "28/08/22","expiry_date": "28/08/22"}]
     collection_users.insert_one(data)
-    return data
+    return data 
 
 
 def show(current_user: schemas.User):

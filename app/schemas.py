@@ -8,6 +8,7 @@ class BooksBase(BaseModel):
     author: str
 
 class Books(BooksBase):
+
     class Config():
         orm_mode = True
 
@@ -24,12 +25,12 @@ class User(BaseModel):
     name: str
     email: EmailStr
     password:str
-    mobile: int = Field()
+    # mobile: int = Field()
 
 class ShowUser(BaseModel):
     name:str
     email:str
-    mobile:MobileStr
+    # mobile:MobileStr
     books : List[UserBooks] =[]
     class Config():
         orm_mode = True

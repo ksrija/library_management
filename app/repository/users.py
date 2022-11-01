@@ -1,11 +1,13 @@
 from ast import keyword
+from http.client import REQUEST_ENTITY_TOO_LARGE
+from pprint import pprint
 import re
 from app import  schemas
 from fastapi import HTTPException, status
 from app.hashing import Hash
-from app.db import collection_book, collection_users
+from app.db import collection_book, collection_users, collection_requests
 from bson import ObjectId
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 today = date.today()
 end_date = today + timedelta(days=60)
@@ -27,6 +29,18 @@ def show(current_user: schemas.User):
                             detail=f"User with the id {id} is not available")
     return user
 
+def request(request: schemas.RequestBase, current_user: schemas.User):
+    user = collection_users.find_one({"email": current_user["email"]})
+    data = collection_book.find_one(dict(request))
+
+    request_dict = {
+        "user_id" : user.get('_id') ,
+        "book_id" : data.get('_id') ,
+        "request_date": today.strftime("%d/%m/%Y"),
+        "approved": False
+    }
+    data = collection_requests.insert_one(dict(request_dict))
+    return request_dict
 
 def issue(request: schemas.Books, current_user: schemas.User):
 
@@ -69,10 +83,12 @@ def search_all(query):
 
     result = re.compile('{}'.format(query), re.I)
     results = collection_book.find({ "title": {'$regex': result}})
-    # print(results)
-    books = []
+
+    books = [schemas.ShowBooks.parse_obj(book) for book in results]
+
+    results = collection_book.find({ "author": {'$regex': result}})
+
     for book in results:
         books.append(schemas.ShowBooks.parse_obj(book))
 
-    
     return books

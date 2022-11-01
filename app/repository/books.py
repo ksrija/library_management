@@ -17,6 +17,7 @@ def show_users():
 
 def create(request: schemas.Books):
     data = dict(request)
+    # data["available"] = True
     collection_book.insert_one(data)
     return request
 

@@ -21,7 +21,7 @@ def show_users():
 
 
 # Show all books
-@router.get('/search')
+@router.get('/search',response_model=List[schemas.ShowBooks])
 def search_filter(query: Optional[str]):
     return users.search_all(query)
 

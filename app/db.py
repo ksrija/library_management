@@ -9,3 +9,5 @@ db = conn.library
 
 collection_book = db["books"]
 collection_users = db["users"]
+
+collection_requests = db["requests"]

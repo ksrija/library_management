@@ -1,8 +1,55 @@
-from typing import List, Optional
+from datetime import datetime
+from optparse import Option
+from typing import List, Optional, Union
+from bson import ObjectId
 from pydantic import BaseModel, constr, EmailStr, Field
+
+
+from bson.objectid import ObjectId as BsonObjectId
+
 
 MobileStr = constr(regex = r'^\d{10}$') 
 
+
+class ObjectIdStr(str):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not isinstance(v, ObjectId):
+            raise ValueError("Not a valid ObjectId")
+        return str(v)
+
+class PydanticObjectId(BsonObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not isinstance(v, BsonObjectId):
+            raise TypeError('ObjectId required')
+        return str(v)
+
+
+class PyObjectId(ObjectId):
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not ObjectId.is_valid(v):
+            raise ValueError('Invalid objectid')
+        return ObjectId(v)
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type='string')
+        
 class BooksBase(BaseModel):
     title: str
     author: str
@@ -64,3 +111,28 @@ class ShowMyBook(BaseModel):
 
     class Config():
         orm_mode = True
+
+class RequestBase(BaseModel):
+    title: str
+    author: str 
+
+class RequestPendingResponse(BaseModel):
+    # book_id: Union[str,None] =None
+    # user_id: Union[str,None] =None
+    user_id: ObjectIdStr=None
+    book_id: ObjectIdStr=None
+    request_date: Union[str, None] = None
+    # approved_date:Union[str, None] = None
+    approved: bool
+    class Config():
+        orm_mode = True
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }
+
+class RequestApprovedResponse(RequestPendingResponse):
+    approved_date:Union[str, None] = None
+    class Config():
+        orm_mode = True
+    

@@ -21,6 +21,10 @@ def get_user(current_user: schemas.User = Depends(oauth2.get_current_user)):
     return users.show(current_user)
 
 
+@router.put("/request", response_model=schemas.RequestPendingResponse)
+def request_book(request: schemas.RequestBase,current_user: schemas.User = Depends(oauth2.get_current_user)):
+    return users.request(request,current_user)
+
 @router.put("/issue", response_model=schemas.ShowUser)
 def issue_book(request: schemas.Books,current_user: schemas.User = Depends(oauth2.get_current_user)):
     return users.issue(request,current_user)

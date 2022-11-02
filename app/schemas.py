@@ -117,8 +117,6 @@ class RequestBase(BaseModel):
     author: str 
 
 class RequestPendingResponse(BaseModel):
-    # book_id: Union[str,None] =None
-    # user_id: Union[str,None] =None
     user_id: ObjectIdStr=None
     book_id: ObjectIdStr=None
     request_date: Union[str, None] = None

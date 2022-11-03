@@ -8,7 +8,7 @@ from app.hashing import Hash
 from app.db import collection_book, collection_users, collection_requests
 from bson import ObjectId
 from datetime import date, timedelta, datetime
-
+import pprint
 today = date.today()
 end_date = today + timedelta(days=60)
 
@@ -29,13 +29,23 @@ def show(current_user: schemas.User):
                             detail=f"User with the id {id} is not available")
     return user
 
+def show_request(current_user):
+
+    user = collection_users.find_one({"email": current_user["email"]})
+    data = collection_requests.find({"user_id": ObjectId(user.get('_id'))})
+    data_list=[schemas.RequestPendingResponse.parse_obj(i) for i in data]
+    pprint.pprint(data_list[0])
+    
+    return data_list
+
+
 def request(request: schemas.RequestBase, current_user: schemas.User):
     user = collection_users.find_one({"email": current_user["email"]})
     data = collection_book.find_one(dict(request))
 
     request_dict = {
-        "user_id" : user.get('_id') ,
-        "book_id" : data.get('_id') ,
+        "user_id" : ObjectId(user.get('_id')),
+        "book_id" : ObjectId(data.get('_id')) ,
         "request_date": today.strftime("%d/%m/%Y"),
         "approved": False
     }

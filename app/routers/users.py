@@ -20,6 +20,10 @@ def create_user(request: schemas.User):
 def get_user(current_user: schemas.User = Depends(oauth2.get_current_user)):
     return users.show(current_user)
 
+@router.get('/show_requests')
+def show_request(current_user: schemas.User = Depends(oauth2.get_current_user)):
+    return users.show_request(current_user)
+
 
 @router.put("/request", response_model=schemas.RequestPendingResponse)
 def request_book(request: schemas.RequestBase,current_user: schemas.User = Depends(oauth2.get_current_user)):

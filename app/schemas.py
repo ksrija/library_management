@@ -11,7 +11,7 @@ from bson.objectid import ObjectId as BsonObjectId
 MobileStr = constr(regex = r'^\d{10}$') 
 
 
-class ObjectIdStr(str):
+class ObjectIdStr(ObjectId):
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
@@ -117,8 +117,8 @@ class RequestBase(BaseModel):
     author: str 
 
 class RequestPendingResponse(BaseModel):
-    user_id: ObjectIdStr=None
-    book_id: ObjectIdStr=None
+    user_id: PyObjectId=None
+    book_id:PyObjectId=None
     request_date: Union[str, None] = None
     # approved_date:Union[str, None] = None
     approved: bool
@@ -128,6 +128,7 @@ class RequestPendingResponse(BaseModel):
         json_encoders = {
             ObjectId: str
         }
+
 
 class RequestApprovedResponse(RequestPendingResponse):
     approved_date:Union[str, None] = None
